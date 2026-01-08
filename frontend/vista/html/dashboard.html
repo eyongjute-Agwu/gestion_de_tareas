@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - TodoList</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="bg-dark border-end" id="sidebar-wrapper">
+      <div class="sidebar-heading text-white p-3">TodoList</div>
+      <div class="list-group list-group-flush">
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+          <i class='bx bx-list-ul'></i> Mis Tareas
+        </a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+          <i class='bx bx-user'></i> Perfil
+        </a>
+        <a href="login.html" class="list-group-item list-group-item-action bg-dark text-white">
+          <i class='bx bx-log-out'></i> Cerrar sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- Contenido -->
+    <div id="page-content-wrapper" class="w-100">
+      <!-- Navbar superior -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container-fluid">
+          <button class="btn btn-primary" id="btnNuevaTarea">
+            <i class='bx bx-plus'></i> Nueva tarea
+          </button>
+          <form class="d-flex ms-auto">
+            <input class="form-control me-2" type="search" placeholder="Buscar tarea" id="searchInput">
+            <button class="btn btn-outline-success" type="button" id="btnBuscar">
+              <i class='bx bx-search'></i>
+            </button>
+          </form>
+          <div class="d-flex align-items-center ms-3">
+            <img src="" alt="Foto usuario" id="fotoUsuario" class="rounded-circle me-2" width="40" height="40">
+            <span id="nombreUsuario"></span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Tabla de tareas -->
+      <div class="container-fluid mt-4">
+        <table class="table table-striped" id="tablaTareas">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Tarea</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nueva/Editar Tarea -->
+  <div class="modal fade" id="modalTarea" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitulo">Nueva Tarea</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formTarea">
+            <div class="mb-3">
+              <label for="tareaNombre" class="form-label">Nombre de la tarea</label>
+              <input type="text" class="form-control" id="tareaNombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="tareaEstado" class="form-label">Estado</label>
+              <select class="form-select" id="tareaEstado">
+                <option value="Pendiente">Pendiente</option>
+                <option value="En progreso">En progreso</option>
+                <option value="Completada">Completada</option>
+              </select>
+            </div>
+            <input type="hidden" id="tareaId">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnGuardarTarea">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script propio -->
+  <script src="../../controlador/dashboard.js"></script>
+</body>
+</html>

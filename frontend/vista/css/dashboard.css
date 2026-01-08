@@ -1,0 +1,27 @@
+/* Estilos generales del dashboard */
+body {
+  font-family: Arial, sans-serif;
+}
+
+#sidebar-wrapper {
+  min-height: 100vh;
+  width: 220px;
+}
+
+#page-content-wrapper {
+  flex: 1;
+}
+
+.sidebar-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+#tablaTareas td, #tablaTareas th {
+  vertical-align: middle;
+}
+
+#fotoUsuario {
+  object-fit: cover;
+  border: 2px solid #007bff;
+}
