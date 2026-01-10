@@ -9,7 +9,7 @@
   <!-- Boxicons -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Estilos propios -->
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
   <div class="d-flex" id="wrapper">
@@ -58,7 +58,7 @@
               <th>#</th>
               <th>Tarea</th>
               <th>Estado</th>
-              <th>Acciones</th>
+              <th colspan="3">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -90,6 +90,14 @@
                 <option value="En progreso">En progreso</option>
                 <option value="Completada">Completada</option>
               </select>
+            </div>
+            <div class="mb-3">
+              <label for="tareaHorario" class="form-label">Horario</label>
+              <input type="time" class="form-control" id="tareaHorario">
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="tareaAlarma">
+              <label class="form-check-label" for="tareaAlarma">Activar alarma</label>
             </div>
             <input type="hidden" id="tareaId">
           </form>
