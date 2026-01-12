@@ -1,0 +1,14 @@
+/* Preloader overlay */
+    #preloader {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    #preloader .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }

@@ -1,12 +1,14 @@
 // Datos estáticos simulando backend
+// Datos dinámicos: intentar cargar desde la carpeta de servicios (con fallback estático)
+const rawFoto = (localStorage.getItem("foto") || "").trim().replace(/^["']|["']$/g, "");
+const fotoPath = rawFoto ? "../../../backend/fotos/" + encodeURIComponent(rawFoto) : "../../../backend/fotos/default.jpg";
 let usuario = {
-  nombre: "Eyong Bernard",
-  foto: "https://via.placeholder.com/40"
+  nombre: localStorage.getItem("nombre") || "Usuario",
+  foto: fotoPath
 };
 
 let tareas = [
   { id: 1, nombre: "Comprar pan", estado: "Pendiente", horario: "08:00", alarma: true },
-  { id: 2, nombre: "Estudiar JavaScript", estado: "En progreso", horario: "15:00", alarma: false },
   { id: 3, nombre: "Hacer ejercicio", estado: "Completada", horario: "19:00", alarma: true }
 ];
 
@@ -82,7 +84,7 @@ function guardarTarea() {
     const tarea = tareas.find(t => t.id == id);
     tarea.nombre = nombre;
     tarea.estado = estado;
-    tarea.horario = horario;
+    tarea.hora = hora;
     tarea.alarma = alarma;
   } else {
     const nueva = {

@@ -4,15 +4,17 @@ import { registrarUsuario } from "../servicios/authService.js";
 document.getElementById("registroForm").addEventListener("submit", e => {
   e.preventDefault();
 
-  const nombre = nombreInput.value;
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  const foto = fotoPreview.src;
+  const usuario = new Usuario(nombreInput.value, emailInput.value, passwordInput.value, fotoInput.files[0]);
 
-  const usuario = new Usuario(nombre, email, password, foto);
-  registrarUsuario(usuario);
+  const preloader = document.getElementById('preloader');
 
-  window.location.href = "login.html";
+  preloader.style.display = 'flex';
+  if(registrarUsuario(usuario)){
+    window.location.href = "login.html";
+  } else{
+    alert("Error al registrar usuario");
+    preloader.style.display = 'none';
+  }
 });
 
 fotoInput.addEventListener("change", () => {
