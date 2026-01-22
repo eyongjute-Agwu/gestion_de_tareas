@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-01-2026 a las 05:27:09
+-- Tiempo de generación: 22-01-2026 a las 14:25:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -31,12 +31,21 @@ CREATE TABLE `tarreas` (
   `id` bigint(20) NOT NULL,
   `nombre_tarea` varchar(255) NOT NULL,
   `estado` enum('pendiente','en_progreso','completada') NOT NULL DEFAULT 'pendiente',
-  `hora` time DEFAULT NULL,
+  `fecha` datetime DEFAULT NULL,
   `estado_alarma` tinyint(1) NOT NULL DEFAULT 0,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `usuario_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tarreas`
+--
+
+INSERT INTO `tarreas` (`id`, `nombre_tarea`, `estado`, `fecha`, `estado_alarma`, `fecha_creacion`, `fecha_actualizacion`, `usuario_id`) VALUES
+(1, 'Tarea1', 'completada', '2026-01-22 04:05:00', 1, '2026-01-22 03:02:18', '2026-01-22 04:33:27', 1),
+(3, 'Tarea3', 'en_progreso', '2026-01-22 04:20:00', 1, '2026-01-22 03:17:59', '2026-01-22 04:32:09', 1),
+(5, 'Tarea5', 'completada', '2026-01-22 04:26:00', 0, '2026-01-22 03:24:36', '2026-01-22 04:34:37', 1);
 
 -- --------------------------------------------------------
 
@@ -86,7 +95,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `tarreas`
 --
 ALTER TABLE `tarreas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

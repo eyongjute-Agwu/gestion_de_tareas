@@ -163,7 +163,6 @@ async function guardarTarea() {
     actualizarTarea(tarea);
   } else {
     const nueva = {
-      id: tareas.length ? Math.max(...tareas.map(t => t.id)) + 1 : 1,
       nombre,
       estado,
       fecha,
