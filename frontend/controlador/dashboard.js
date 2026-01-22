@@ -7,61 +7,132 @@ let usuario = {
   foto: fotoPath
 };
 
-let tareas = [
-  { id: 1, nombre: "Comprar pan", estado: "Pendiente", horario: "08:00", alarma: true },
-  { id: 3, nombre: "Hacer ejercicio", estado: "Completada", horario: "19:00", alarma: true }
-];
+let tareas = [];
+
+import { getTareas, crearTarea, actualizarTarea, eliminarTarea } from "../servicios/taskService.js";
 
 
 // Inicialización
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  //si no existe la sesion redirigir al login
+  if (!localStorage.getItem("nombre")) {
+    window.location.href = "login.html";
+  }
+  const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+  btnCerrarSesion.addEventListener("click", () => {
+    localStorage.removeItem("nombre");
+    localStorage.removeItem("foto");
+    window.location.href = "login.html";
+  });
+  
+
   document.getElementById("nombreUsuario").textContent = usuario.nombre;
   document.getElementById("fotoUsuario").src = usuario.foto;
 
-  renderTareas();
+  tareas = await getTareas().catch(err => {
+    console.error("Error al cargar tareas desde el backend:", err);
+    return [];
+  });
+
+  renderTareas(tareas);
 
   document.getElementById("btnNuevaTarea").addEventListener("click", nuevaTarea);
   document.getElementById("btnGuardarTarea").addEventListener("click", guardarTarea);
   document.getElementById("btnBuscar").addEventListener("click", buscarTarea);
+  let btnEditar = document.querySelectorAll(".btnEditar");
+
+  btnEditar.forEach(element => {
+    element.addEventListener("click", function (e) {
+      if (e.target && e.target.closest("button")) {
+        const id = e.target.closest("button").getAttribute("value");
+        editarTarea(id);
+      }
+    });
+  });
+
+  let btnEliminar = document.querySelectorAll(".btnEliminar");
+  btnEliminar.forEach(element => {
+    element.addEventListener("click", function (e) {
+      if(confirm("¿Está seguro de que desea eliminar esta tarea?")){
+        if (e.target && e.target.closest("button")) {
+          const id = e.target.closest("button").getAttribute("value");
+          eliminar(parseInt(id));
+        }
+      }
+    });
+  });
+
 });
+
+async function cargarTareas() {
+  tareas = await getTareas().catch(err => {
+    console.error("Error al cargar tareas desde el backend:", err);
+    return [];
+  });
+  renderTareas(tareas);
+}
 
 // Renderizar tabla
 function renderTareas(lista = tareas) {
   const tbody = document.querySelector("#tablaTareas tbody");
   tbody.innerHTML = "";
-  lista.forEach((t, i) => {
-    // Asignar color según estado
-    let estadoClass = "";
-    switch (t.estado) {
-      case "Pendiente":
-        estadoClass = "text-danger fw-bold"; // rojo
-        break;
-      case "En progreso":
-        estadoClass = "text-warning fw-bold"; // amarillo/naranja
-        break;
-      case "Completada":
-        estadoClass = "text-success fw-bold"; // verde
-        break;
-    }
+  //si no hay tareas, decir que no hay tareas
+  if (lista.tareas.length === 0) {
+    const filaVacia = document.createElement("tr");
+    filaVacia.innerHTML = `<td colspan="7" class="text-center">No hay tareas disponibles</td>`;
+    tbody.appendChild(filaVacia);
+    return;
+  }else{
 
-    const fila = document.createElement("tr");
-    fila.innerHTML = `
-      <td>${i + 1}</td>
-      <td>${t.nombre}</td>
-      <td class="${estadoClass}">${t.estado}</td>
-      <td>${t.horario || "-"}</td>
-      <td>${t.alarma ? "⏰ Sí" : "No"}</td>
-      <td>
-        <button class="btn btn-sm btn-warning me-2" onclick="editarTarea(${t.id})">
-          <i class='bx bx-edit'></i>
-        </button>
-        <button class="btn btn-sm btn-danger" onclick="eliminarTarea(${t.id})">
-          <i class='bx bx-trash'></i>
-        </button>
-      </td>
-    `;
-    tbody.appendChild(fila);
-  });
+    lista.tareas.forEach((t, i) => {
+      // Asignar color según estado
+      let estadoClass = "";
+      switch (t.estado) {
+        case "pendiente":
+          estadoClass = "text-danger fw-bold"; // rojo
+          t.estado = "Pendiente";
+          break;
+        case "en_progreso":
+          estadoClass = "text-warning fw-bold"; // amarillo/naranja
+          t.estado = "En progreso";
+          break;
+        case "completada":
+          estadoClass = "text-success fw-bold"; // verde
+          t.estado = "Completada";
+          break;
+      }
+  
+      const fila = document.createElement("tr");
+      // 1. Convertimos el string a un objeto Date (reemplazando el espacio por 'T' para formato ISO)
+      const dateObj = t.fecha ? new Date(t.fecha.replace(' ', 'T')) : null;
+
+      // 2. Recuperamos solamente la fecha
+      // Usamos toLocaleDateString() en el objeto creado
+      let fecha = dateObj ? dateObj.toLocaleDateString() : "";
+
+      // 3. Recuperamos solamente la hora
+      let hora = dateObj ? dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "";
+
+
+      fila.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${t.nombre_tarea}</td>
+        <td class="${estadoClass}">${t.estado}</td>
+        <td>${fecha || "-"}</td>
+        <td>${hora || "-"}</td>
+        <td>${t.estado_alarma ? "⏰ Sí" : "No"}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2 btnEditar" value=${t.id}">
+            <i class='bx bx-edit'></i>
+          </button>
+          <button class="btn btn-sm btn-danger btnEliminar" value=${t.id}>
+            <i class='bx bx-trash'></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(fila);
+    });
+  }
 }
 
 // Nueva tarea
@@ -73,50 +144,79 @@ function nuevaTarea() {
 }
 
 // Guardar tarea
-function guardarTarea() {
+async function guardarTarea() {
   const id = document.getElementById("tareaId").value;
   const nombre = document.getElementById("tareaNombre").value;
   const estado = document.getElementById("tareaEstado").value;
+  const fecha = document.getElementById("tareaFecha").value;
   const horario = document.getElementById("tareaHorario").value;
   const alarma = document.getElementById("tareaAlarma").checked;
 
   if (id) {
-    const tarea = tareas.find(t => t.id == id);
+    const tarea = {};
+    tarea.idTarea = id;
     tarea.nombre = nombre;
     tarea.estado = estado;
-    tarea.hora = hora;
+    tarea.fecha = fecha;
+    tarea.horario = horario;
     tarea.alarma = alarma;
+    actualizarTarea(tarea);
   } else {
     const nueva = {
       id: tareas.length ? Math.max(...tareas.map(t => t.id)) + 1 : 1,
       nombre,
       estado,
+      fecha,
       horario,
       alarma
     };
-    tareas.push(nueva);
+    crearTarea(nueva);
   }
-
-  renderTareas();
+  setTimeout(() => {
+    window.location.reload();
+  }, 100);
   bootstrap.Modal.getInstance(document.getElementById("modalTarea")).hide();
 }
 
 // Editar tarea
-function editarTarea(id) {
-  const tarea = tareas.find(t => t.id == id);
+async function editarTarea(id) {
+  
+  tareas = await getTareas().catch(err => {
+    console.error("Error al cargar tareas desde el backend:", err);
+    return [];
+  });
+
+  const tarea = tareas.tareas.find(t => parseInt(t.id) == parseInt(id));
+  // 1. Extraemos la fecha cortando el string antes del espacio
+  let fecha = tarea.fecha ? tarea.fecha.split(' ')[0] : ""; 
+
+  // 2. Extraemos la hora
+  // Opción A: Usando manipulación de strings (mantiene el formato exacto del texto)
+  let hora = tarea.fecha ? tarea.fecha.split(' ')[1].substring(0, 5) : "";
+  
   document.getElementById("modalTitulo").textContent = "Editar Tarea";
-  document.getElementById("tareaNombre").value = tarea.nombre;
+  document.getElementById("tareaNombre").value = tarea.nombre_tarea;
   document.getElementById("tareaEstado").value = tarea.estado;
-  document.getElementById("tareaHorario").value = tarea.horario;
-  document.getElementById("tareaAlarma").checked = tarea.alarma;
+  document.getElementById("tareaFecha").value = fecha;
+  document.getElementById("tareaHorario").value = hora;
+  document.getElementById("tareaAlarma").checked = tarea.estado_alarma;
   document.getElementById("tareaId").value = tarea.id;
   new bootstrap.Modal(document.getElementById("modalTarea")).show();
+  
 }
 
 // Eliminar tarea
-function eliminarTarea(id) {
-  tareas = tareas.filter(t => t.id !== id);
-  renderTareas();
+async function eliminar(id) {
+  tareas = await getTareas().catch(err => {
+    console.error("Error al cargar tareas desde el backend:", err);
+    return [];
+  });
+
+  tareas = tareas.tareas.filter(t => parseInt(t.id) !== parseInt(id));
+  eliminarTarea(id);
+  setTimeout(() => {
+    window.location.reload();
+  }, 100);
 }
 
 // Buscar tarea

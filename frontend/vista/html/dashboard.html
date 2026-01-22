@@ -23,7 +23,7 @@
         <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
           <i class='bx bx-user'></i> Perfil
         </a>
-        <a href="login.html" class="list-group-item list-group-item-action bg-dark text-white">
+        <a href="login.html" id="btnCerrarSesion" class="list-group-item list-group-item-action bg-dark text-white">
           <i class='bx bx-log-out'></i> Cerrar sesión
         </a>
       </div>
@@ -58,6 +58,7 @@
               <th>#</th>
               <th>Tarea</th>
               <th>Estado</th>
+              <th>Fecha</th>
               <th>Hora</th>
               <th>Activar alarma</th>
               <th colspan="2" class="text-center">Acciones</th>
@@ -68,6 +69,37 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Próximas tareas en completarse -->
+<div class="container-fluid mt-5">
+  <h5 class="mb-3">Próximas tareas en completarse</h5>
+  <div id="proximasTareas" class="row">
+    <!-- Temporizadores dinámicos -->
+    <div class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Tarea 1</h6>
+          <p class="card-text">Tiempo restante: <strong id="timer1">02:45:30</strong></p>
+          <div class="progress">
+            <div class="progress-bar" style="width: 65%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Tarea 2</h6>
+          <p class="card-text">Tiempo restante: <strong id="timer2">01:15:20</strong></p>
+          <div class="progress">
+            <div class="progress-bar bg-success" style="width: 40%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 
@@ -88,13 +120,17 @@
             <div class="mb-3">
               <label for="tareaEstado" class="form-label">Estado</label>
               <select class="form-select" id="tareaEstado">
-                <option value="Pendiente">Pendiente</option>
-                <option value="En progreso">En progreso</option>
-                <option value="Completada">Completada</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_progreso">En progreso</option>
+                <option value="completada">Completada</option>
               </select>
             </div>
             <div class="mb-3">
-              <label for="tareaHorario" class="form-label">Horario</label>
+              <label for="tareaFecha" class="form-label">Fecha</label>
+              <input type="date" class="form-control" id="tareaFecha">
+            </div>
+            <div class="mb-3">
+              <label for="tareaHorario" class="form-label">Hora</label>
               <input type="time" class="form-control" id="tareaHorario">
             </div>
             <div class="mb-3 form-check">
@@ -112,9 +148,11 @@
     </div>
   </div>
 
+
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Script propio -->
-  <script src="../../controlador/dashboard.js"></script>
+  <script src="../../controlador/dashboard.js" type="module"></script>
 </body>
 </html>
